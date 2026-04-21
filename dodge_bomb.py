@@ -87,7 +87,7 @@ def calc_orientation(
 
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     """
-    10段階の爆弾SurfaceリストとaccelerationリストのタプルをVを返す
+    10段階の爆弾Surfaceリストとaccelerationリストのタプルを返す
     """
     bb_imgs = []
     for r in range(1, 11):
@@ -127,8 +127,9 @@ def main():
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1]
 
+        # 爆弾の追従・加速・拡大処理
         vx, vy = calc_orientation(bb_rct, kk_rct, (vx, vy))
-        idx = min(tmr // 500, 9)
+        idx = min(tmr // 500, 9)  # 500フレームごとに段階アップ（最大9）
         avx = vx * bb_accs[idx]
         avy = vy * bb_accs[idx]
         bb_rct.move_ip(avx, avy)
@@ -141,6 +142,7 @@ def main():
         bb_rct.width = bb_img.get_rect().width
         bb_rct.height = bb_img.get_rect().height
 
+        # こうかとんの移動・画像切替処理
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
