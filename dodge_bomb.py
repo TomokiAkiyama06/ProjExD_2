@@ -69,6 +69,22 @@ def get_kk_imgs() -> dict[tuple[int, int], pg.Surface]:
     }
 
 
+def calc_orientation(
+    org: pg.Rect, dst: pg.Rect, current_xy: tuple[float, float]
+) -> tuple[float, float]:
+    """
+    爆弾(org)からこうかとん(dst)に向かう正規化済み方向ベクトルを返す。
+    距離が300未満の場合は慣性としてcurrent_xyをそのまま返す。
+    """
+    dx = dst.centerx - org.centerx
+    dy = dst.centery - org.centery
+    dist = math.sqrt(dx ** 2 + dy ** 2)
+    if dist < 300:
+        return current_xy
+    scale = math.sqrt(50) / dist
+    return dx * scale, dy * scale
+
+
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     """
     10段階の爆弾SurfaceリストとaccelerationリストのタプルをVを返す
@@ -95,7 +111,7 @@ def main():
     bb_img = bb_imgs[0]
     bb_rct = bb_img.get_rect()
     bb_rct.center = random.randint(10, WIDTH - 10), random.randint(10, HEIGHT - 10)
-    vx, vy = 5, 5
+    vx, vy = 5.0, 5.0
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -111,6 +127,7 @@ def main():
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1]
 
+        vx, vy = calc_orientation(bb_rct, kk_rct, (vx, vy))
         idx = min(tmr // 500, 9)
         avx = vx * bb_accs[idx]
         avy = vy * bb_accs[idx]
