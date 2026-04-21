@@ -7,7 +7,7 @@ import pygame as pg
 
 
 WIDTH, HEIGHT = 1100, 650
-BOMB_COLOR = (255, 0, 0)
+BOMB_COLOR = (255, 0, 0)  #マジックナンバーの修正
 DELTA = {
     pg.K_UP: (0, -5),
     pg.K_DOWN: (0, 5),
