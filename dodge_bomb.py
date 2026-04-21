@@ -1,6 +1,8 @@
+import math
 import os
 import random
 import sys
+import time
 import pygame as pg
 
 
@@ -23,10 +25,36 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
     return yoko, tate
 
 
+def gameover(screen: pg.Surface) -> None:
+    """
+    ゲームオーバー画面を5秒間表示する
+    """
+    bb = pg.Surface((WIDTH, HEIGHT))
+    bb.fill((0, 0, 0))
+    bb.set_alpha(128)
+    fnt = pg.font.SysFont("notosanscjkjp", 80)
+    txt = fnt.render("Game Over", True, (255, 255, 255))
+    txt_x = WIDTH // 2 - txt.get_width() // 2
+    txt_y = HEIGHT // 2 - txt.get_height() // 2
+    bb.blit(txt, [txt_x, txt_y])
+    kk_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 0.9)
+    kk_rct = kk_img.get_rect()
+    kk_rct.centery = HEIGHT // 2
+    kk_rct.right = txt_x - 5
+    bb.blit(kk_img, kk_rct)
+    kk_rct2 = kk_img.get_rect()
+    kk_rct2.centery = HEIGHT // 2
+    kk_rct2.left = txt_x + txt.get_width() + 5
+    bb.blit(kk_img, kk_rct2)
+    screen.blit(bb, [0, 0])
+    pg.display.update()
+    time.sleep(5)
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
-    bg_img = pg.image.load("fig/pg_bg.jpg")    
+    bg_img = pg.image.load("fig/pg_bg.jpg")
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
@@ -40,9 +68,9 @@ def main():
     tmr = 0
     while True:
         for event in pg.event.get():
-            if event.type == pg.QUIT: 
+            if event.type == pg.QUIT:
                 return
-        screen.blit(bg_img, [0, 0]) 
+        screen.blit(bg_img, [0, 0])
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
@@ -60,6 +88,7 @@ def main():
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
         if kk_rct.colliderect(bb_rct):
+            gameover(screen)
             return
         screen.blit(bb_img, bb_rct)
         screen.blit(kk_img, kk_rct)
