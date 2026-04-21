@@ -7,6 +7,7 @@ import pygame as pg
 
 
 WIDTH, HEIGHT = 1100, 650
+BOMB_COLOR = (255, 0, 0)
 DELTA = {
     pg.K_UP: (0, -5),
     pg.K_DOWN: (0, 5),
@@ -92,7 +93,7 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     bb_imgs = []
     for r in range(1, 11):
         bb_img = pg.Surface((20 * r, 20 * r))
-        pg.draw.circle(bb_img, (255, 0, 0), (10 * r, 10 * r), 10 * r)
+        pg.draw.circle(bb_img, BOMB_COLOR, (10 * r, 10 * r), 10 * r)
         bb_img.set_colorkey((0, 0, 0))
         bb_imgs.append(bb_img)
     bb_accs = [a for a in range(1, 11)]
